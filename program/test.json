@@ -1,0 +1,37 @@
+[
+    {
+        "receiver": "default",
+        "status": "firing",
+        "alerts": [
+            {
+                "status": "firing",
+                "labels": {
+                    "alertname": "eachNodeSessionAlert",
+                    "host": "ip-172-31-82-106.ec2.internal",
+                    "instance": "localhost:9273",
+                    "job": "telegraf_metrics"
+                },
+                "annotations": {
+                    "description": "0"
+                },
+                "startsAt": "2024-02-12T18:52:41.78Z",
+                "endsAt": "0001-01-01T00:00:00Z",
+                "generatorURL": "http://ip-172-31-82-106.ec2.internal:9090/graph?g0.expr=exec_vm_metrics_numberOfSessions+%3E+-1&g0.tab=1"
+            }
+        ],
+        "groupLabels": {},
+        "commonLabels": {
+            "alertname": "eachNodeSessionAlert",
+            "host": "ip-172-31-82-106.ec2.internal",
+            "instance": "localhost:9273",
+            "job": "telegraf_metrics"
+        },
+        "commonAnnotations": {
+            "description": "2"
+        },
+        "externalURL": "http://ip-172-31-82-106.ec2.internal:9093",
+        "version": "4",
+        "groupKey": "{}:{}"
+    }
+]
+
