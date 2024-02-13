@@ -1,19 +1,40 @@
 ---
-- name: Start the Telegraf service
-  service:
-    name: telegraf
-    state: started
-    enabled: true
+- block:
+    - name: Extract IP from inventory_hostname_short for prometheus use
+      set_fact:
+        ipToParse: "      - targets: ['{{ inventory_hostname_short.split('-')[1:] | join('.') }}:9273']"
+        ipToCheckMetricsFire: "{{ inventory_hostname_short.split('-')[1:] | join('.') }}"
 
-- name: Get Telegraf service status
-  systemd:
-    name: telegraf
-    state: started
-  register: telegraf_service_status
+    - name: Start the Telegraf service
+      service:
+        name: telegraf
+        state: started
+        enabled: true
 
-- name: metrics are fired variable
-  set_fact:
-    metricsFired: true
+    - name: Get Telegraf service status
+      systemd:
+        name: telegraf
+        state: started
+      register: telegraf_service_status
 
+    - name: fail if Telegraf service falied to come up
+      fail:
+        msg: "Telegraf service is not started"
+      when: telegraf_service_status is not defined or telegraf_service_status.failed or telegraf_service_status.state != 'started'
 
+    - name: Check if http://{{ipToCheckMetricsFire}}:9273/metrics accessible
+      uri:
+        url: "http://{{ipToCheckMetricsFire}}:9273/metrics"
+        timeout: 10
 
+    - name: Set fact metricsFired
+      set_fact:
+        metricsFired: true
+
+  rescue:
+    - name: Failure detected, setting metricsFired to false
+      set_fact:
+        metricsFired: false
+    - name: Display error message
+      debug:
+        msg: "An error occurred during playbook execution. Skip all next tasks."

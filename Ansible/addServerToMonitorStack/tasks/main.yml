@@ -1,9 +1,9 @@
 ---
-- include: install.yml
+#- include: install.yml
 
 - include: startTelegrafService.yml
-  when: installedSuccessfully == true
+ # when: installedSuccessfully == true
 
 - include: addServetToPrometheus.yml
-  when: metricsFired == true
+ # when: metricsFired == true
 

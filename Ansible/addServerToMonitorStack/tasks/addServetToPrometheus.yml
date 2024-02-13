@@ -1,23 +1,37 @@
 ---
-- name: Extract IP from inventory_hostname_short for prometheus use
-  set_fact:
-    ipToParse: "      - targets: ['{{ inventory_hostname_short.split('-')[1:] | join('.') }}:9273']"
+- block:
+    - name: Insert ipToParse to the end of prometheus.yml
+      lineinfile:
+        path: "{{ pathToPrometheusFile }}"
+        line: "{{ ipToParse }}"
+        insertafter: EOF
+      delegate_to: localhost
 
-- name: Debug the short hostname IP fact
-  debug:
-    var: ipToParse
+    - name: Check if prometheus.yml syntax is correct
+      shell: /usr/local/bin/promtool check config "{{ pathToPrometheusFile }}"
+      delegate_to: localhost
 
-- name: Insert ipToParse to the end of prometheus.yml
-  lineinfile:
-    path: /etc/prometheus/prometheus.yml
-    line: "{{ ipToParse }}"
-    insertafter: EOF
-  delegate_to: localhost
+    - name: Start the prometheus service
+      service:
+        name: prometheus
+        state: restarted
+        enabled: true
+      delegate_to: localhost
 
-- name: Start the prometheus service
-  service:
-    name: prometheus
-    state: restarted
-    enabled: true
-  delegate_to: localhost
+    - name: Get prometheus service status
+      systemd:
+        name: prometheus
+        state: started
+      register: prometheus_service_status
+      delegate_to: localhost
+
+    - name: fail if prometheus service falied to come up
+      fail:
+        msg: "prometheus service is not started"
+      when: prometheus_service_status is not defined or prometheus_service_status.failed or prometheus_service_status.state != 'started'
+
+  rescue:
+    - name: Display error message
+      debug:
+        msg: "An error occurred during playbook execution. Skipping all next tasks."
 

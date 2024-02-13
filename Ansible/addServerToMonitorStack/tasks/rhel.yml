@@ -1,71 +1,85 @@
-- name: Ensure packages installed
-  yum:
-    name: "{{ item }}"
-    state: present 
-  loop:
-    - python3-pip
+---
+- block:
+  - name: Ensure required packages and groups are installed
+    yum:
+      name: "{{ item }}"
+      state: present
+    loop:
+      - python3-pip
 
-- name: Install Python packages using pip
-  pip:
-    name: "{{ item }}"
-    executable: pip3   
-  loop:
-    - psutil
+  - name: Remove folders
+    file:
+      path: "{{ item }}"
+      state: absent
+      mode: '0755'
+    loop:
+      - "{{ plugin_folder }}"
+      - "{{ tmp_install_folder }}"
 
-- name:  Remove folders
-  file:
-    path: "{{ item }}"
-    state: absent
-    mode: '0755'
-  with_items:
-  - "{{ plugin_folder }}"
-  - "{{ tmp_install_folder }}"
+  - name: Create folders
+    file:
+      path: "{{ item }}"
+      state: directory
+      mode: '0755'
+    loop:
+      - "{{ plugin_folder }}"
+      - "{{ tmp_install_folder }}"
 
-- name: Create folders
-  file:
-    path: "{{ item }}"
-    state: directory
-    mode: '0755'
-  with_items:
-  - "{{ plugin_folder }}"
-  - "{{ tmp_install_folder }}"
+  - name: Download Telegraf Installation File
+    get_url:
+      url: "{{ yum_file_url }}"
+      dest: "{{ tmp_install_folder }}"
 
-- name: Download Telegraf Instaltion File
-  get_url:
-    url:  "{{ yum_file_url }}"
-    dest: "{{ tmp_install_folder }}"
+  - name: Ensure Group Telegraf Exists
+    group:
+      name: telegraf
+      state: present
 
-- name: Ensure Group Telegraf Exists
-  group:
-    name: telegraf
-    state: present
+  - name: Add User Telegraf
+    user:
+      name: telegraf
+      shell: /bin/false
+      groups: telegraf
+      append: yes
 
-- name: Add User Telegraf
-  user:
-    name: telegraf
-    shell: /bin/false
-    groups: telegraf
-    append: yes
-    # home: "{{ conf_folder }}"
+  - name: Install the Telegraf Package
+    dnf:
+      name: "{{ tmp_install_folder }}{{ yum_file_install }}"
+      state: present
 
-- name: Install the Telegraf Package
-  dnf:
-    name: "{{ tmp_install_folder }}{{ yum_file_install }}"
-    state: present
+  - name: Insert telegraf.conf template file to "{{ telegrafConfFilePath }}"
+    template:
+      src: telegraf.conf.j2
+      dest: "{{ telegrafConfFilePath }}"
 
-- name: insert telegraf.conf template file to "{{ telegrafConfFilePath }}"
-  template:
-    src: telegraf.conf.j2
-    dest: "{{ telegrafConfFilePath }}"
+  - name: Copy python plugin file to "{{ plugin_folder }}"
+    copy:
+      src: vm_metrics.py
+      dest: "{{ plugin_folder }}/vm_metrics.py"
+      mode: "0755"
+      owner: ec2-user
+      group: ec2-user
 
-- name: copy python plugin file to "{{ plugin_folder }}"
-  copy:
-    src: vm_metrics.py
-    dest: "{{ plugin_folder }}/vm_metrics.py"
-    mode: "0755"
-    owner: ec2-user
-    group: ec2-user
-    
-- name: Set installedSuccessfully variable
-  set_fact:
-    installedSuccessfully: true
+  - name: Run the python plugin
+    script: "{{ plugin_folder }}/vm_metrics.pys"
+    register: script_result
+
+  - name: Check if the Python plugin ran successfully
+    fail:
+      msg: "Python script failed to run"
+    when: script_result.rc != 0
+  
+  - name: Set installedSuccessfully variable
+    set_fact:
+      installedSuccessfully: true
+
+  rescue:
+    - name: Failure detected, setting installedSuccessfully to false
+      set_fact:
+        installedSuccessfully: false
+        metricsFired: false
+    - name: Display error message
+      debug:
+        msg: "An error occurred during playbook execution. Skip all next tasks."
+
+

@@ -1,7 +1,7 @@
 ---
 # vars file for telegraf_inxtall
 
-
+pathToPrometheusFile: "/etc/prometheus/prometheus.yml"
 yum_file_install: "telegraf-1.29.4-1.x86_64.rpm"
 tmp_install_folder: "/tmp/Telegraf/"
 telegrafConfFilePath: "/etc/telegraf/telegraf.conf"
