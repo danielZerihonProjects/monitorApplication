@@ -1,0 +1,4 @@
+---
+- name: debug 
+  debug:
+    msg: "Sorry, this OS is not supported yet. It will be supported in the next sprint."

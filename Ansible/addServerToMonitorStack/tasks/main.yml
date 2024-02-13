@@ -1,11 +1,5 @@
 ---
-# tasks file for telegraf_inxtall
- - include: rhel.yml
-  #  when:
-  #  - ansible_distribution == 'Ubuntu' and ansible_distribution_major_version == '20'
+#- include: install.yml
 
-#  - include: Ubuntu18.yaml # not sopported os
-#    when:
-#    - ansible_distribution != 'rhel9' 
-
-
+- include: startTelegrafService.yml
+#  when: installedSuccessfully == true

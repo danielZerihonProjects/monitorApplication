@@ -1,0 +1,32 @@
+---
+- name: Start the Telegraf service
+  service:
+    name: telegraf
+    state: started
+    enabled: true
+  notify:
+    - "pause"
+    - "check status"
+    - "assert running"
+
+- name: Get Telegraf service status
+  systemd:
+    name: telegraf
+    state: status
+  register: telegraf_service_status
+
+- name: debug
+  debug: 
+    msg: 
+      - "{{ telegraf_service_status }}"
+
+# - name: Display Telegraf error messages if any
+#   debug:
+#     msg: "{{ telegraf_errors }}"
+#   when: telegraf_errors | length > 0
+
+# - name: Print message if no errors found
+#   debug:
+#     msg: "No errors found in Telegraf service logs"
+#   when: telegraf_errors | length == 0
+

@@ -1,0 +1,6 @@
+---
+- include: rhel.yml
+  when: ansible_os_family == "RedHat"
+
+- include: otherOs.yml
+  when: ansible_os_family != "RedHat"

@@ -1,20 +1,18 @@
 ---
 # vars file for telegraf_inxtall
 
-#files
-deb_file_install: "telegraf_1.20.4-1_amd64.deb"
-yum_file_install: "telegraf-1.20.4-1.x86_64.rpm" #change to yum
 
-#VM Folders
+installedSuccsesfully:
+yum_file_install: "telegraf-1.29.4-1.x86_64.rpm"
+
 tmp_install_folder: "/tmp/Telegraf/"
-conf_folder: "/etc/telegraf"
-plugin_folder: "/var/telegraf_plugins/"
-tmp_folder: "/tmp/TELEGRAF_TMP/"
-plugins_tmp_location: "/tmp/TELEGRAF_TMP/artifactory/puppet-files/telegraf/telegraf_plugins/vm/"
+
+telegrafConfFilePath: "/etc/telegraf/telegraf.conf"
+
+plugin_folder: "/var/telegrafPlugins/"
+
+yum_file_url: "https://repos.influxdata.com/rhel/8/x86_64/stable/telegraf-1.29.4-1.x86_64.rpm"
 
 
-vm_plugin_list_artifactory: ""
-deb_file: ""
-yum_file_url: ""
-telegraf_conf: ""
-web_plugin_folder: ""
+
+
