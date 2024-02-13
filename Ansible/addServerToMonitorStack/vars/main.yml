@@ -2,17 +2,8 @@
 # vars file for telegraf_inxtall
 
 
-installedSuccsesfully:
 yum_file_install: "telegraf-1.29.4-1.x86_64.rpm"
-
 tmp_install_folder: "/tmp/Telegraf/"
-
 telegrafConfFilePath: "/etc/telegraf/telegraf.conf"
-
 plugin_folder: "/var/telegrafPlugins/"
-
 yum_file_url: "https://repos.influxdata.com/rhel/8/x86_64/stable/telegraf-1.29.4-1.x86_64.rpm"
-
-
-
-
