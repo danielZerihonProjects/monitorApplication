@@ -8,7 +8,7 @@ This repository contains an bash program that triggeres a Ansible program along 
 	b status: Y.
 - `prometheusFiles/`: Placeholder for Prometheus configuration files.
 - `telegrafPlugins/`: Placeholder for Telegraf plugin files.
-- `Ansible`: README for ansible located at: /addServerToMonitorStack.
+- `Ansible`: README for ansible located at: Ansible/addServerToMonitorStack.
 
 ## Scripts
 
