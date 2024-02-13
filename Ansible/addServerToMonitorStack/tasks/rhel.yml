@@ -61,14 +61,9 @@
       group: ec2-user
 
   - name: Run the python plugin
-    script: "{{ plugin_folder }}/vm_metrics.pys"
+    shell: python3 "{{ plugin_folder }}/vm_metrics.py"
     register: script_result
 
-  - name: Check if the Python plugin ran successfully
-    fail:
-      msg: "Python script failed to run"
-    when: script_result.rc != 0
-  
   - name: Set installedSuccessfully variable
     set_fact:
       installedSuccessfully: true
@@ -81,5 +76,6 @@
     - name: Display error message
       debug:
         msg: "An error occurred during playbook execution. Skip all next tasks."
+
 
 

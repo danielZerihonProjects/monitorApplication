@@ -30,8 +30,14 @@
         msg: "prometheus service is not started"
       when: prometheus_service_status is not defined or prometheus_service_status.failed or prometheus_service_status.state != 'started'
 
+    - name: Set fact nodeParsed
+      set_fact:
+        nodeParsed: true
+        
   rescue:
+    - name: Failure detected, setting nodeParsed to false
+      set_fact:
+        nodeParsed: false
     - name: Display error message
       debug:
-        msg: "An error occurred during playbook execution. Skipping all next tasks."
-
+        msg: "An error occurred during playbook execution. Skip all next tasks."

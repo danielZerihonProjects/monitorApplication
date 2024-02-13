@@ -1,0 +1,24 @@
+---
+- block:
+  - debug: 
+      msg:
+        - "This is a Test Suite to the whole proccess."
+        - "run: ls {{ numOfSessionOnEachNodeDir }}/{{ ansible_nodename }}.txt"
+
+  - name: Check if file exists
+    shell:
+      cmd: "ls {{ numOfSessionOnEachNodeDir }}/{{ ansible_nodename }}.txt"
+    register: result
+    retries: 2
+    delay: 300
+    until: result.rc == 0
+    delegate_to: localhost
+
+  - name: Test succeeded
+    debug:
+      msg: "Test Suite succeeded: File {{ ansible_nodename }}.txt exists"
+
+  rescue:
+    - name: Fail the playbook
+      fail:
+        msg: "Test Suite Falied.File {{ ansible_nodename }}.txt does not exist after multiple attempts"
