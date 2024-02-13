@@ -1,2 +1,0 @@
-numberOfSession: 3.0
-status: -1
