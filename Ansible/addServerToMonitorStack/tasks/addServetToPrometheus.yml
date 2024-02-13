@@ -1,0 +1,23 @@
+---
+- name: Extract IP from inventory_hostname_short for prometheus use
+  set_fact:
+    ipToParse: "      - targets: ['{{ inventory_hostname_short.split('-')[1:] | join('.') }}:9273']"
+
+- name: Debug the short hostname IP fact
+  debug:
+    var: ipToParse
+
+- name: Insert ipToParse to the end of prometheus.yml
+  lineinfile:
+    path: /etc/prometheus/prometheus.yml
+    line: "{{ ipToParse }}"
+    insertafter: EOF
+  delegate_to: localhost
+
+- name: Start the prometheus service
+  service:
+    name: prometheus
+    state: restarted
+    enabled: true
+  delegate_to: localhost
+

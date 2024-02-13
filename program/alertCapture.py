@@ -16,7 +16,7 @@ def newjson():
     print(alert)
 
     # Extract necessary information from the JSON alert
-    alert_host = alert['commonLabels']['host']
+    alert_host = alert['alerts'][0]['labels']['host']
     alert_value = float(alert['alerts'][0]['annotations']['description'])
 
     print("alert_host")
