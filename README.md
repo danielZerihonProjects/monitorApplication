@@ -12,11 +12,14 @@ This repository contains an bash program that triggeres a Ansible program along 
 
 ## Scripts
 
-### execudeProgram.sh
+### program/execudeProgram.sh
 
 Main Script,This Bash script provides instructions and prompts the user to input the VM name and PEM file name. It then checks SSH connection, updates the hosts file, and executes the Ansible playbook.
 
-### alertCapture.py
+### program/alertCapture.py
 
 This Python script sets up a Flask application to capture alerts, parse JSON data, and update files based on received alerts.
 
+### telegrafPlugins/vm_metrics.py
+
+This Python script collects various system metrics such as CPU usage, RAM usage, RAM available, and the number of active sessions.
