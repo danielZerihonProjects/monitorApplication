@@ -1,0 +1,9 @@
+groups:
+  - name: sessionAlert
+    rules:
+      - alert: eachNodeSessionAlert
+        expr: exec_vm_metrics_numberOfSessions > -1
+        for: 1m
+        annotations:
+          description: "{{ $value }}"
+
